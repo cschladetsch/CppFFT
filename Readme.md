@@ -20,7 +20,7 @@ The FFT Visualizer is a C++ application that reads audio data from a WAV file an
 
 2. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/fft_visualizer.git
+   git clone https://github.com/cschladetsch/fft_visualizer.git
    cd fft_visualizer
    ```
 
