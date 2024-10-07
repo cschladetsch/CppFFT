@@ -35,8 +35,13 @@ int main(int argc, char* argv[]) {
     fftw_complex* out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * (N / 2 + 1));
     fftw_plan plan = fftw_plan_dft_r2c_1d(N, in, out, FFTW_ESTIMATE);
 
-    // Create a window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "FFT Visualizer");
+    // Create a window with specific settings
+    sf::ContextSettings settings;
+    settings.depthBits = 24; // Set depth bits
+    settings.stencilBits = 8; // Set stencil bits
+    settings.antialiasingLevel = 2; // Enable anti-aliasing
+
+    sf::RenderWindow window(sf::VideoMode(800, 600), "FFT Visualizer", sf::Style::Default, settings);
 
     // Main loop
     while (window.isOpen()) {
@@ -68,7 +73,7 @@ int main(int argc, char* argv[]) {
             // Scale x to fit the window width
             float x = static_cast<float>(i) * (800.0f / (N / 2));
             // Normalize and scale the magnitude for visibility
-            float y = 600 - static_cast<float>(magnitude * 50 / N); // Adjust scaling for visibility
+            float y = 600 - static_cast<float>(magnitude * 50 / N);
 
             // Avoid negative y values
             if (y < 0) y = 0;
