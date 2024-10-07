@@ -2,6 +2,10 @@
 
 This project is an audio visualizer that uses the Fast Fourier Transform (FFT) to create a real-time spectral display of audio files.
 
+## Sample
+
+![Image](resources/Untitled.png)
+
 ## Requirements
 
 - Windows Subsystem for Linux (WSL) with Ubuntu
