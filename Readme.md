@@ -16,56 +16,55 @@ This project is an audio visualizer that uses the Fast Fourier Transform (FFT) t
 
 ## Setup for WSL
 
-1. Install WSL with Ubuntu if you haven't already. Follow the [official Microsoft guide](https://docs.microsoft.com/en-us/windows/wsl/install).
+1. **Install WSL with Ubuntu** if you haven't already. Follow the [official Microsoft guide](https://docs.microsoft.com/en-us/windows/wsl/install).
 
-2. Install an X11 server for Windows. Recommend VcXsrv: (Ignore if running natively):
+2. **Install an X11 server for Windows** (for graphical output in WSL). We recommend VcXsrv:
    - Download and install [VcXsrv](https://sourceforge.net/projects/vcxsrv/).
-   - Launch XLaunch and choose these settings:
-     - Display number: 0
+   - Launch `XLaunch` and use the following settings:
+     - Display number: `0`
      - Start no client
      - Extra settings: Disable access control
 
-3. In your WSL Ubuntu terminal, set the DISPLAY environment variable:
-   ```
+3. **Set the DISPLAY environment variable in your WSL terminal**:
+   ```bash
    echo "export DISPLAY=:0.0" >> ~/.bashrc
    source ~/.bashrc
    ```
 
-4. Install the required libraries in WSL:
-   ```
+4. **Install the required libraries** (SFML, FFTW3, and libsndfile) in WSL:
+   ```bash
    sudo apt-get update
    sudo apt-get install libsfml-dev libfftw3-dev libsndfile1-dev g++
    ```
 
-5. Clone this repository or copy the `main.cpp` and `r` files to your WSL environment.
+5. **Clone this repository** or copy the `main.cpp` and `r` files to your WSL environment.
 
-6. Make the `r` script executable:
-   ```
+6. **Make the `r` script executable**:
+   ```bash
    chmod +x r
    ```
 
 ## Building and Running
 
-1. Run the setup and build script:
-   ```
+1. **Run the setup and build script**:
+   ```bash
    ./r
    ```
 
-2. If the compilation is successful, you can run the program with:
-   ```
+2. **If the compilation is successful**, you can run the program with:
+   ```bash
    ./fft_visualiser path_to_your_audio_file.wav
    ```
    Replace `path_to_your_audio_file.wav` with the path to your mono WAV file.
 
 ## Troubleshooting
 
-- If you see "Error: couldn't open display", make sure your X11 server is running and the DISPLAY variable is set correctly.
+- If you see "Error: couldn't open display", ensure your X11 server is running and the `DISPLAY` environment variable is set correctly.
 - If you encounter graphics-related errors, try updating your graphics drivers or using a different X11 server.
-- Ensure your audio file is a mono WAV file. Stereo files are not supported.
+- Ensure your audio file is a **mono WAV file**. Stereo files are not supported.
 
 ## Notes
 
 - The visualizer works best with mono WAV files.
 - The window size is set to 1024x768 but can be adjusted in the code if needed.
 - The visualization uses 128 bars with a color gradient from blue (low frequencies) to red (high frequencies).
-
