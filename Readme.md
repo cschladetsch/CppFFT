@@ -1,43 +1,67 @@
 # FFT Visualizer
 
-## Overview
-The FFT Visualizer is a C++ application that reads audio data from a WAV file and visualizes its frequency spectrum in real time using Fast Fourier Transform (FFT). The visualizer is built with the following libraries:
-- **FFTW**: For performing the Fast Fourier Transform.
-- **SFML**: For creating a graphical window and rendering the frequency spectrum.
-- **libsndfile**: For reading WAV audio files.
+This project is an audio visualizer that uses the Fast Fourier Transform (FFT) to create a real-time spectral display of audio files.
 
-## Features
-- Reads mono WAV files and performs real-time FFT analysis.
-- Displays the frequency spectrum in a graphical window.
-- Simple and easy to use.
+## Requirements
 
-## Installation
-1. **Install Dependencies**: Ensure you have the required libraries installed:
-   ```bash
-   sudo apt update
-   sudo apt install libfftw3-dev libsfml-dev libsndfile1-dev
+- Windows Subsystem for Linux (WSL) with Ubuntu
+- X11 server for Windows (e.g., VcXsrv)
+- SFML library
+- FFTW3 library
+- libsndfile library
+
+## Setup for WSL
+
+1. Install WSL with Ubuntu if you haven't already. Follow the [official Microsoft guide](https://docs.microsoft.com/en-us/windows/wsl/install).
+
+2. Install an X11 server for Windows. Recommend VcXsrv: (Ignore if running natively):
+   - Download and install [VcXsrv](https://sourceforge.net/projects/vcxsrv/).
+   - Launch XLaunch and choose these settings:
+     - Display number: 0
+     - Start no client
+     - Extra settings: Disable access control
+
+3. In your WSL Ubuntu terminal, set the DISPLAY environment variable:
+   ```
+   echo "export DISPLAY=:0.0" >> ~/.bashrc
+   source ~/.bashrc
    ```
 
-2. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/cschladetsch/fft_visualizer.git
-   cd fft_visualizer
+4. Install the required libraries in WSL:
+   ```
+   sudo apt-get update
+   sudo apt-get install libsfml-dev libfftw3-dev libsndfile1-dev g++
    ```
 
-3. **Compile the Application**:
-   ```bash
-   g++ -o fft_visualizer main.cpp -lfftw3 -lsfml-graphics -lsfml-window -lsfml-system -lsndfile
+5. Clone this repository or copy the `main.cpp` and `r` files to your WSL environment.
+
+6. Make the `r` script executable:
+   ```
+   chmod +x r
    ```
 
-## Usage
-Run the visualizer by specifying a WAV file:
-```bash
-./fft_visualizer <path_to_your_audio_file.wav>
-```
+## Building and Running
 
-## Contributing
-Contributions are welcome! Feel free to submit a pull request or open an issue.
+1. Run the setup and build script:
+   ```
+   ./r
+   ```
 
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+2. If the compilation is successful, you can run the program with:
+   ```
+   ./fft_visualiser path_to_your_audio_file.wav
+   ```
+   Replace `path_to_your_audio_file.wav` with the path to your mono WAV file.
+
+## Troubleshooting
+
+- If you see "Error: couldn't open display", make sure your X11 server is running and the DISPLAY variable is set correctly.
+- If you encounter graphics-related errors, try updating your graphics drivers or using a different X11 server.
+- Ensure your audio file is a mono WAV file. Stereo files are not supported.
+
+## Notes
+
+- The visualizer works best with mono WAV files.
+- The window size is set to 1024x768 but can be adjusted in the code if needed.
+- The visualization uses 128 bars with a color gradient from blue (low frequencies) to red (high frequencies).
 
