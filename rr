@@ -1,0 +1,4 @@
+./convert The*
+
+./r && yes | ./fft_visualiser TheGame_mono.wav
+
