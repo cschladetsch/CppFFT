@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <fftw3.h>
 #include <sndfile.h>
 #include <cmath>
@@ -7,6 +8,8 @@
 
 const int SAMPLE_RATE = 44100;
 const int N = 1024; // FFT size
+const int WINDOW_WIDTH = 800;
+const int WINDOW_HEIGHT = 600;
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -23,7 +26,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Check if the file is stereo or mono
+    // Check if the file is mono
     if (sfinfo.channels != 1) {
         std::cerr << "Error: only mono audio is supported" << std::endl;
         sf_close(file);
@@ -35,26 +38,51 @@ int main(int argc, char* argv[]) {
     fftw_complex* out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * (N / 2 + 1));
     fftw_plan plan = fftw_plan_dft_r2c_1d(N, in, out, FFTW_ESTIMATE);
 
-    // Create a window with specific settings
-    sf::ContextSettings settings;
-    settings.depthBits = 24; // Set depth bits
-    settings.stencilBits = 8; // Set stencil bits
-    settings.antialiasingLevel = 2; // Enable anti-aliasing
+    // Create a window
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "FFT Visualizer");
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "FFT Visualizer", sf::Style::Default, settings);
+    // Load the audio file for playback
+    sf::SoundBuffer buffer;
+    if (!buffer.loadFromFile(argv[1])) {
+        std::cerr << "Error: could not load audio file for playback" << std::endl;
+        sf_close(file);
+        return 1;
+    }
+
+    sf::Sound sound(buffer);
+    sound.play();
+
+    std::cout << "Sound started playing." << std::endl;
+
+    // Create a vector to store our visualization bars
+    const int NUM_BARS = 64;
+    std::vector<sf::RectangleShape> bars(NUM_BARS);
+    float barWidth = static_cast<float>(WINDOW_WIDTH) / NUM_BARS;
+    for (int i = 0; i < NUM_BARS; ++i) {
+        bars[i].setFillColor(sf::Color::Green);
+        bars[i].setPosition(i * barWidth, WINDOW_HEIGHT);
+        bars[i].setSize(sf::Vector2f(barWidth - 1, 0));
+    }
 
     // Main loop
-    while (window.isOpen()) {
+    sf::Clock clock;
+    while (window.isOpen() && sound.getStatus() == sf::Sound::Playing) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
 
+        // Get current playback position
+        sf::Time playbackPosition = sound.getPlayingOffset();
+        sf_count_t samplePosition = static_cast<sf_count_t>(playbackPosition.asSeconds() * SAMPLE_RATE);
+
+        // Seek to the current position in the file
+        sf_seek(file, samplePosition, SEEK_SET);
+
         // Read samples from the WAV file
         sf_count_t frames_read = sf_readf_double(file, in, N);
         if (frames_read < N) {
-            // If fewer frames than N are read, fill the rest with zeros
             for (int i = frames_read; i < N; ++i) {
                 in[i] = 0.0;
             }
@@ -63,28 +91,32 @@ int main(int argc, char* argv[]) {
         // Execute FFT
         fftw_execute(plan);
 
-        // Prepare for drawing
-        window.clear(sf::Color::Black);
-        sf::VertexArray spectrum(sf::LinesStrip, N / 2);
-
-        // Draw frequency spectrum
-        for (int i = 0; i < N / 2; ++i) {
-            double magnitude = std::sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
-            // Scale x to fit the window width
-            float x = static_cast<float>(i) * (800.0f / (N / 2));
-            // Normalize and scale the magnitude for visibility
-            float y = 600 - static_cast<float>(magnitude * 50 / N);
-
-            // Avoid negative y values
-            if (y < 0) y = 0;
-
-            spectrum[i].position = sf::Vector2f(x, y);
-            spectrum[i].color = sf::Color::Green;
+        // Update visualization
+        for (int i = 0; i < NUM_BARS; ++i) {
+            double magnitude = 0;
+            int start = i * (N / 4 / NUM_BARS);
+            int end = (i + 1) * (N / 4 / NUM_BARS);
+            for (int j = start; j < end; ++j) {
+                magnitude += std::sqrt(out[j][0] * out[j][0] + out[j][1] * out[j][1]);
+            }
+            magnitude /= (end - start);
+            
+            float height = std::min(static_cast<float>(magnitude * 5.0 / N), 1.0f) * WINDOW_HEIGHT;
+            bars[i].setSize(sf::Vector2f(barWidth - 1, -height));
         }
 
-        window.draw(spectrum);
+        // Clear the window and draw the bars
+        window.clear(sf::Color::Black);
+        for (const auto& bar : bars) {
+            window.draw(bar);
+        }
         window.display();
+
+        // Limit the frame rate
+        sf::sleep(sf::milliseconds(16)); // Approximately 60 FPS
     }
+
+    std::cout << "Playback ended or window closed." << std::endl;
 
     // Clean up
     fftw_destroy_plan(plan);
@@ -93,4 +125,3 @@ int main(int argc, char* argv[]) {
     sf_close(file);
     return 0;
 }
-
