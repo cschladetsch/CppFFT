@@ -40,17 +40,4 @@ Contributions are welcome! Feel free to submit a pull request or open an issue.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-### GitHub Repository Description
-
-For your GitHub repository description, you can use:
-
-```
-A C++ application that performs real-time FFT analysis on audio files and visualizes the frequency spectrum.
-```
-
-### Summary
-
-- You now have a complete `README.md` file in one piece.
-- A shell script named `r` that runs the FFT visualizer with a WAV file as an argument.
-- A concise GitHub repository description.
 
