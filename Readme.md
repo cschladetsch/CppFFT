@@ -4,7 +4,7 @@ This project is an audio visualizer that uses the Fast Fourier Transform (FFT) t
 
 ## Sample
 
-![Image](resources/Untitled.png)
+![Image](resources/Untitled.jpg)
 
 ## Requirements
 
