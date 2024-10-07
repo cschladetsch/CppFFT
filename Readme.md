@@ -18,7 +18,7 @@ This project is an audio visualizer that uses the Fast Fourier Transform (FFT) t
 
 1. **Install WSL with Ubuntu** if you haven't already. Follow the [official Microsoft guide](https://docs.microsoft.com/en-us/windows/wsl/install).
 
-2. **Install an X11 server for Windows** (for graphical output in WSL). We recommend VcXsrv:
+2. **Install an X11 server for Windows** (for graphical output in WSL). I recommend VcXsrv:
    - Download and install [VcXsrv](https://sourceforge.net/projects/vcxsrv/).
    - Launch `XLaunch` and use the following settings:
      - Display number: `0`
@@ -66,5 +66,5 @@ This project is an audio visualizer that uses the Fast Fourier Transform (FFT) t
 ## Notes
 
 - The visualizer works best with mono WAV files.
-- The window size is set to 1024x768 but can be adjusted in the code if needed.
-- The visualization uses 128 bars with a color gradient from blue (low frequencies) to red (high frequencies).
+- The window size is 1024x768 but can be adjusted in the code.
+- The visualization uses 128 bars with a colour gradient from blue (low frequencies) to red (high frequencies).
